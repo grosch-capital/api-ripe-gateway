@@ -12,8 +12,8 @@ func main() {
 
 	http.Handle("/", r)
 	r.HandleFunc("/raw/ip", handlers.RAWIpInformationHandler)
-	//r.HandleFunc("/raw/geo", handlers.RAWGeoInformationHandler)
-	//r.HandleFunc("/json/ip", handlers.JSONIpInformationHandler)
+	r.HandleFunc("/raw/geo", handlers.RAWGeoInformationHandler)
+	r.HandleFunc("/json/ip", handlers.JSONIpInformationHandler)
 	//r.HandleFunc("/json/geo", handlers.JSONGeoInformationHandler)
 	r.HandleFunc("/healthz", handlers.HealthCheckHandler)
 
