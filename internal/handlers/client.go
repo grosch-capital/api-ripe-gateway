@@ -34,10 +34,18 @@ func JSONIpInformationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RAWGeoInformationHandler(w http.ResponseWriter, r *http.Request) {
-	ip_addr := r.Header.Get("X-Real-Ip")
+	IPAddress := r.Header.Get("X-Real-Ip")
+
+	if IPAddress == "" {
+		IPAddress = r.Header.Get("X-Forwarded-For")
+	}
+
+	if IPAddress == "" {
+		IPAddress = r.RemoteAddr
+	}
 
 	// Add your code here to lookup geo by IP address
-	reqest := "http://ip-api.com/json/" + ip_addr
+	reqest := "http://ip-api.com/json/" + IPAddress
 	resp, err := http.Get(reqest)
 	if err != nil {
 		panic(err)
