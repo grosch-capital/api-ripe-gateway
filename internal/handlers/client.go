@@ -1,6 +1,9 @@
 package handlers
 
-import "net/http"
+import (
+	"io/ioutil"
+	"net/http"
+)
 
 func RAWIpInformationHandler(w http.ResponseWriter, r *http.Request) {
 	IPAddress := r.Header.Get("X-Real-Ip")
@@ -42,7 +45,11 @@ func RAWGeoInformationHandler(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		w.Write(resp.Body)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(body)
 	} else {
 		w.Write([]byte("Error"))
 	}
