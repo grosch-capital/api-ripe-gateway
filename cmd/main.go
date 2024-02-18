@@ -16,6 +16,5 @@ func main() {
 	r.HandleFunc("/json/geo", handlers.JSONGeoInformationHandler)
 	r.HandleFunc("/healthz", handlers.HealthCheckHandler)
 
-	http.Handle("/", r)
 	http.ListenAndServe(":8080", r)
 }
