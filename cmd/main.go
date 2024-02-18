@@ -1,8 +1,8 @@
 package main
 
 import (
-	"api-ripe-gateway/internal/handlers"
 	"github.com/gorilla/mux"
+	"github.com/grosch-capital/api-ripe-gateway/internal/handlers"
 	"net/http"
 )
 
