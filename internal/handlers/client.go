@@ -30,9 +30,23 @@ func JSONIpInformationHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"ip_address":"` + ip_addr + `"}`))
 }
 
-// func RAWGeoInformationHandler(w http.ResponseWriter, r *http.Request) {
+func RAWGeoInformationHandler(w http.ResponseWriter, r *http.Request) {
+	ip_addr := r.Header.Get("X-Real-Ip")
 
-// }
+	// Add your code here to lookup geo by IP address
+	reqest := "http://ip-api.com/json/" + ip_addr
+	resp, err := http.Get(reqest)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		w.Write(resp.Body)
+	} else {
+		w.Write([]byte("Error"))
+	}
+}
 
 // func JSONGeoInformationHandler(w http.ResponseWriter, r *http.Request) {
 
