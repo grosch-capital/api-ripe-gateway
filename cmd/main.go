@@ -10,12 +10,16 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	http.Handle("/", r)
-	r.HandleFunc("/raw/ip", handlers.RAWIpInformationHandler)
-	r.HandleFunc("/raw/geo", handlers.RAWGeoInformationHandler)
-	r.HandleFunc("/json/ip", handlers.JSONIpInformationHandler)
-	//r.HandleFunc("/json/geo", handlers.JSONGeoInformationHandler)
-	r.HandleFunc("/healthz", handlers.HealthCheckHandler)
+	x, _ := handlers.Traceroute("google.com")
+	print(x)
 
+	r.HandleFunc("/", handlers.LookupRAWHandler)
+	r.HandleFunc("/ip/raw", handlers.LookupRAWHandler)
+	r.HandleFunc("/ip/json", handlers.LookupJSONHandler)
+	r.HandleFunc("/geo", handlers.LookupClientGeoHandler)
+	r.HandleFunc("/geo/{ip}", handlers.LookupSpecGeoHandler)
+	r.HandleFunc("/route", handlers.HealthCheckHandler)
+	r.HandleFunc("/route/{host}", handlers.HealthCheckHandler)
+	r.HandleFunc("/healthz", handlers.HealthCheckHandler)
 	http.ListenAndServe(":8080", r)
 }
