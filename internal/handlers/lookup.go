@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/grosch-capital/api-ripe-gateway/internal/modules"
 )
 
 func LookupRAWHandler(w http.ResponseWriter, r *http.Request) {
@@ -47,41 +48,55 @@ func LookupClientGeoHandler(w http.ResponseWriter, r *http.Request) {
 		IPAddress = r.RemoteAddr
 	}
 
-	reqest := "http://ip-api.com/json/" + IPAddress
-	resp, err := http.Get(reqest)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	cachedGeoInfo := modules.GetElementByKey(IPAddress)
 
-	if resp.StatusCode == http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
+	if cachedGeoInfo != "" {
+		w.Write([]byte(cachedGeoInfo))
+	} else {
+		reqest := "http://ip-api.com/json/" + IPAddress
+		resp, err := http.Get(reqest)
 		if err != nil {
 			panic(err)
 		}
-		w.Write(body)
-	} else {
-		w.Write([]byte("Error"))
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusOK {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err)
+			}
+			modules.SetElementByKey(IPAddress, string(body))
+			w.Write(body)
+		} else {
+			w.Write([]byte("Error"))
+		}
 	}
 }
 
 func LookupSpecGeoHandler(w http.ResponseWriter, r *http.Request) {
 	addr := mux.Vars(r)["ip"]
 
-	reqest := "http://ip-api.com/json/" + addr
-	resp, err := http.Get(reqest)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	cachedGeoInfo := modules.GetElementByKey(addr)
 
-	if resp.StatusCode == http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
+	if cachedGeoInfo != "" {
+		w.Write([]byte(cachedGeoInfo))
+	} else {
+		reqest := "http://ip-api.com/json/" + addr
+		resp, err := http.Get(reqest)
 		if err != nil {
 			panic(err)
 		}
-		w.Write(body)
-	} else {
-		w.Write([]byte("Error"))
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusOK {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err)
+			}
+			modules.SetElementByKey(addr, string(body))
+			w.Write(body)
+		} else {
+			w.Write([]byte("Error"))
+		}
 	}
 }
