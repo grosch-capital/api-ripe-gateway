@@ -8,10 +8,8 @@ import (
 
 func redisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "master.redis--nrvfy9mhwj5r.addon.code.run:6379",
-		Username: "default",
-		Password: "ea602ee160f32eb614cb84a1e9117b04",
-		DB:       0,
+		Addr: "178.251.228.223:6379",
+		DB:   0,
 	})
 	return client
 }
