@@ -3,7 +3,7 @@ FROM golang:1.22.0-alpine as builder
 RUN mkdir -p /build
 ADD * /build/
 WORKDIR /build
-RUN go mod tidy
+RUN apk add git && go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o ripe-serivce cmd/main.go
 
 # Prepare the image for the final run
