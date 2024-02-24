@@ -2,6 +2,7 @@ package modules
 
 import (
 	"context"
+	"crypto/tls"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -10,6 +11,9 @@ func redisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr: "redis.lerigos.com:6379",
 		DB:   0,
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 	})
 	return client
 }
