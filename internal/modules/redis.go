@@ -8,7 +8,7 @@ import (
 
 func redisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: "178.251.228.223:6379",
+		Addr: "redis.lerigos.com:6379",
 		DB:   0,
 	})
 	return client
