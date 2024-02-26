@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/grosch-capital/api-ripe-gateway/internal/handlers"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 type LogMiddleware struct {
@@ -61,14 +62,23 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
-	r.HandleFunc("/", handlers.LookupRAWHandler)
-	r.HandleFunc("/ip/raw", handlers.LookupRAWHandler)
-	r.HandleFunc("/ip/json", handlers.LookupJSONHandler)
-	r.HandleFunc("/geo", handlers.LookupClientGeoHandler)
-	r.HandleFunc("/geo/{ip}", handlers.LookupSpecGeoHandler)
-	r.HandleFunc("/route", handlers.HealthCheckHandler)
-	r.HandleFunc("/route/{host}", handlers.HealthCheckHandler)
-	r.HandleFunc("/healthz", handlers.HealthCheckHandler)
+	app, err := newrelic.NewApplication(
+		newrelic.ConfigAppName("The Grosch RIPE"),
+		newrelic.ConfigLicense("eu01xx8abfdac3510c18d83bcae625b4FFFFNRAL"),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+	)
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/", handlers.LookupRAWHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/ip/raw", handlers.LookupRAWHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/ip/json", handlers.LookupJSONHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/geo", handlers.LookupClientGeoHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/geo/{ip}", handlers.LookupSpecGeoHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/route", handlers.HealthCheckHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/route/{host}", handlers.HealthCheckHandler))
+	r.HandleFunc(newrelic.WrapHandleFunc(app, "/healthz", handlers.HealthCheckHandler))
 
 	logMiddleware := NewLogMiddleware(logger)
 	r.Use(logMiddleware.Func())
