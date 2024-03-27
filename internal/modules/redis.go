@@ -9,7 +9,7 @@ import (
 
 func redisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: "redis.lerigos.com:6379",
+		Addr: "redis.grosch.capital:6379",
 		DB:   1,
 		TLSConfig: &tls.Config{
 			InsecureSkipVerify: true,
